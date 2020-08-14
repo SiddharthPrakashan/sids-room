@@ -6,20 +6,27 @@ import { OffersPage } from './offers.page';
 const routes: Routes = [
   {
     path: '',
-    component: OffersPage
+    component: OffersPage,
   },
   {
-    path: 'new-offer',
-    loadChildren: () => import('./new-offer/new-offer.module').then( m => m.NewOfferPageModule)
+    path: 'new',
+    loadChildren: () =>
+      import('./new-offer/new-offer.module').then((m) => m.NewOfferPageModule),
   },
   {
-    path: 'edit-offer',
-    loadChildren: () => import('./edit-offer/edit-offer.module').then( m => m.EditOfferPageModule)
+    path: 'edit/:placeId',
+    loadChildren: () =>
+      import('./edit-offer/edit-offer.module').then(
+        (m) => m.EditOfferPageModule
+      ),
   },
   {
-    path: 'offer-bookings',
-    loadChildren: () => import('./offer-bookings/offer-bookings.module').then( m => m.OfferBookingsPageModule)
-  }
+    path: ':placeId',
+    loadChildren: () =>
+      import('./offer-bookings/offer-bookings.module').then(
+        (m) => m.OfferBookingsPageModule
+      ),
+  },
 ];
 
 @NgModule({

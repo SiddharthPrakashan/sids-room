@@ -1,0 +1,7 @@
+{
+  "name": "sid-rooms",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

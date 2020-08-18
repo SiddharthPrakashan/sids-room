@@ -5,7 +5,19 @@
 </ion-header>
 
 <ion-content>
-  <ion-button color="primary" class="ion-margin" (click)="onLogin()">
-    Login
-  </ion-button>
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">User ID</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+
+    <ion-button color="primary" class="ion-margin" (click)="onLogin()">
+      Login
+    </ion-button>
+  </ion-list>
+  <!-- <ion-spinner></ion-spinner> -->
 </ion-content>

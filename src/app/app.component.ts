@@ -34,4 +34,6 @@ export class AppComponent {
     this.authService.logout();
     this.router.navigateByUrl('/auth');
   }
+
+  ontoggleDarkMode(event: CustomEvent) {}
 }

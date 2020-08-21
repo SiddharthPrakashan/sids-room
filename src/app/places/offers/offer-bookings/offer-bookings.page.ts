@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Place } from '../../place.model';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+
+import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
 
 @Component({
@@ -11,6 +13,7 @@ import { PlacesService } from '../../places.service';
 })
 export class OfferBookingsPage implements OnInit {
   place: Place;
+  private placeSub: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,7 +27,17 @@ export class OfferBookingsPage implements OnInit {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
-      this.place = this.placeService.getPlace(paramMap.get('placeId'));
+      this.placeSub = this.placeService
+        .getPlace(paramMap.get('placeId'))
+        .subscribe((place) => {
+          this.place = place;
+        });
     });
+  }
+
+  ngOnDestroy() {
+    if (this.placeSub) {
+      this.placeSub.unsubscribe();
+    }
   }
 }

@@ -1,15 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import {
   NavController,
   ModalController,
   ActionSheetController,
+  LoadingController,
 } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
+import { Place } from '../../place.model';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
+import { BookingService } from '../../../bookings/booking.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-place-detail',
@@ -18,14 +21,18 @@ import { CreateBookingComponent } from '../../../bookings/create-booking/create-
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
   place: Place;
+  isBookable = false;
   private placeSub: Subscription;
 
   constructor(
-    private route: ActivatedRoute,
     private navCtrl: NavController,
-    private placeService: PlacesService,
+    private route: ActivatedRoute,
+    private placesService: PlacesService,
     private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private bookingService: BookingService,
+    private loadingCtrl: LoadingController,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -34,56 +41,48 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/discover');
         return;
       }
-      this.placeSub = this.placeService
+      this.placeSub = this.placesService
         .getPlace(paramMap.get('placeId'))
         .subscribe((place) => {
           this.place = place;
+          this.isBookable = place.userId !== this.authService.userId;
         });
     });
   }
 
   onBookPlace() {
-    //this.navCtrl.navigateBack('/places/tabs/discover');
-
+    // this.router.navigateByUrl('/places/tabs/discover');
+    // this.navCtrl.navigateBack('/places/tabs/discover');
+    // this.navCtrl.pop();
     this.actionSheetCtrl
       .create({
         header: 'Choose an Action',
         buttons: [
           {
-            text: 'Random',
-            icon: 'shuffle-outline',
-            handler: () => {
-              this.openBookingModal('random');
-            },
-          },
-          {
-            text: 'Select',
-            icon: 'calendar-outline',
+            text: 'Select Date',
             handler: () => {
               this.openBookingModal('select');
             },
           },
           {
-            text: 'Favorite',
-            icon: 'heart',
+            text: 'Random Date',
             handler: () => {
-              console.log('Favorite clicked');
+              this.openBookingModal('random');
             },
           },
           {
             text: 'Cancel',
-            icon: 'close',
             role: 'cancel',
-            handler: () => {
-              console.log('Cancel clicked');
-            },
           },
         ],
       })
-      .then((actionSheetEl) => actionSheetEl.present());
+      .then((actionSheetEl) => {
+        actionSheetEl.present();
+      });
   }
 
   openBookingModal(mode: 'select' | 'random') {
+    console.log(mode);
     this.modalCtrl
       .create({
         component: CreateBookingComponent,
@@ -93,8 +92,29 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         modalEl.present();
         return modalEl.onDidDismiss();
       })
-      .then((res) => {
-        console.log(res.data, res.role);
+      .then((resultData) => {
+        if (resultData.role === 'confirm') {
+          this.loadingCtrl
+            .create({ message: 'Booking place...' })
+            .then((loadingEl) => {
+              loadingEl.present();
+              const data = resultData.data.bookingData;
+              this.bookingService
+                .addBooking(
+                  this.place.id,
+                  this.place.title,
+                  this.place.imageUrl,
+                  data.firstName,
+                  data.lastName,
+                  data.guestNumber,
+                  data.startDate,
+                  data.endDate
+                )
+                .subscribe(() => {
+                  loadingEl.dismiss();
+                });
+            });
+        }
       });
   }
 

@@ -16,7 +16,16 @@
   <ion-grid>
     <ion-row>
       <ion-col size-md="6" offset-md="3">
-        <ion-list>
+        <div *ngIf="isLoading" class="ion-text-center">
+          <ion-spinner></ion-spinner>
+        </div>
+        <div *ngIf="!isLoading && offers.length <= 0" class="ion-text-center">
+          <ion-text>No offers found, please create one!</ion-text>
+          <ion-button routerLink="/places/tabs/offers/new"
+            >Offer New Place</ion-button
+          >
+        </div>
+        <ion-list *ngIf="!isLoading && offers.length > 0">
           <ion-item-sliding *ngFor="let offer of offers" #slidingItem>
             <ion-item-options side="start">
               <ion-item-option

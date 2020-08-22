@@ -34,6 +34,9 @@
         <ion-list>
           <ion-item-sliding *ngFor="let booking of loadedBookings" #slidingItem>
             <ion-item>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="booking.placeImage"></ion-img>
+              </ion-thumbnail>
               <ion-label>
                 <h2>{{ booking.placeTitle }}</h2>
                 <p>Guest(s): {{ booking.guestNumber }}</p>

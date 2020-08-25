@@ -4,6 +4,7 @@ import {
   ViewChild,
   ElementRef,
   Renderer2,
+  Input,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import * as mapboxgl from 'mapbox-gl';
@@ -16,10 +17,10 @@ import { environment } from '../../../environments/environment';
 })
 export class MapModalComponent implements OnInit {
   @ViewChild('map') mapElementRef: ElementRef;
+  @Input() center = { lng: 73.8128, lat: 15.3992 };
+  @Input() selectable = true;
+  @Input() title: 'Pick Location';
   map: mapboxgl.Map;
-  style = 'mapbox://styles/mapbox/streets-v11';
-  lat = 37.75;
-  lng = -122.41;
 
   constructor(
     private modalCtrl: ModalController,
@@ -40,17 +41,23 @@ export class MapModalComponent implements OnInit {
     mapboxgl.accessToken = environment.mapbox.accessToken;
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: this.style,
+      style: 'mapbox://styles/mapbox/streets-v11',
       zoom: 13,
-      center: [this.lng, this.lat],
+      center: [this.center.lng, this.center.lat],
     });
 
     this.map.addControl(new mapboxgl.NavigationControl());
 
-    this.map.on('click', (e) => {
-      //this.modalCtrl.dismiss(JSON.stringify(e.lngLat.wrap()), 'confirm');
-      this.modalCtrl.dismiss(e.lngLat.wrap(), 'confirm');
-    });
+    if (this.selectable) {
+      this.map.on('click', (e) => {
+        console.log(e.lngLat.wrap());
+        this.modalCtrl.dismiss(e.lngLat.wrap(), 'confirm');
+      });
+    } else {
+      const marker = new mapboxgl.Marker()
+        .setLngLat([this.center.lng, this.center.lat])
+        .addTo(this.map);
+    }
 
     this.map.on('load', () => {
       const mapEl = this.mapElementRef.nativeElement;

@@ -14,6 +14,7 @@ import { Place } from '../../place.model';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 import { BookingService } from '../../../bookings/booking.service';
 import { AuthService } from '../../../auth/auth.service';
+import { MapModalComponent } from '../../../shared/map-modal/map-modal.component';
 
 @Component({
   selector: 'app-place-detail',
@@ -139,6 +140,24 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
                 });
             });
         }
+      });
+  }
+
+  onShowFullMap() {
+    this.modalCtrl
+      .create({
+        component: MapModalComponent,
+        componentProps: {
+          center: {
+            lng: this.place.location.lng,
+            lat: this.place.location.lat,
+          },
+          selectable: false,
+          title: this.place.location.address,
+        },
+      })
+      .then((modalEl) => {
+        modalEl.present();
       });
   }
 

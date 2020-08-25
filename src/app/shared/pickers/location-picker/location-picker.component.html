@@ -5,7 +5,7 @@
     class="location-image"
     [src]="selectedLocationImage"
     (click)="onPickLocation()"
-    *ngIf="!selectedLocationImage && !isLoading"
+    *ngIf="selectedLocationImage && !isLoading"
   ></ion-img>
   <ion-button
     (click)="onPickLocation()"
@@ -15,3 +15,6 @@
     <ion-label>Select Location</ion-label>
   </ion-button>
 </div>
+<p *ngIf="selectedLocationAddress && !isLoading" class="ion-text-center">
+  {{ selectedLocationAddress }}
+</p>

@@ -107,7 +107,9 @@ export class LocationPickerComponent implements OnInit {
         buttons: [
           {
             text: 'Okay',
-            role: 'cancel',
+            handler: () => {
+              this.onPickLocation();
+            },
           },
         ],
       })

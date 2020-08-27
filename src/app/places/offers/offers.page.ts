@@ -2,9 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IonItemSliding } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { PlacesService } from '../places.service';
 import { Place } from '../place.model';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-offers',
@@ -12,6 +14,7 @@ import { Place } from '../place.model';
   styleUrls: ['./offers.page.scss'],
 })
 export class OffersPage implements OnInit, OnDestroy {
+  loadedPlaces: Place[];
   offers: Place[];
   isLoading = false;
   private placesSub: Subscription;
@@ -26,7 +29,7 @@ export class OffersPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.isLoading = true;
-    this.placesService.fetchPlaces().subscribe(() => {
+    this.placesService.fetchMyOffers().subscribe(() => {
       this.isLoading = false;
     });
   }
@@ -34,7 +37,7 @@ export class OffersPage implements OnInit, OnDestroy {
   onEdit(offerId: string, slidingItem: IonItemSliding) {
     slidingItem.close();
     this.router.navigate(['/', 'places', 'tabs', 'offers', 'edit', offerId]);
-    console.log('Editing item', offerId);
+    //console.log('Editing item', offerId);
   }
 
   onFavorite(slidingItem: IonItemSliding) {}

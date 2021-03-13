@@ -4,7 +4,6 @@
 #hide keys
 private_key.pepk
 sids-room-keystore.jks
-sids-room-firebase-adminsdk-1ypzx-a3f1e7d80c.json
 
 #hide environment variables
 **/environments
